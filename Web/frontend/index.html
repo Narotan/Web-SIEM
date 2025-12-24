@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIEM Dashboard - Obsidian SOC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Critical CSS for fast initial paint */
+        .loading-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #0b0e14; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.3s; }
+        .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+        .spinner { width: 40px; height: 40px; border: 3px solid #30363d; border-top-color: #58a6ff; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span class="logo-text">SIEM</span>
+        </div>
+        
+        <ul class="nav-menu">
+            <li class="nav-item active">
+                <a href="index.html" class="nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="14" width="7" height="7" rx="1"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    </svg>
+                    <span>Дашборд</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="events.html" class="nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                    <span>Реестр событий</span>
+                </a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <button class="logout-btn" id="logoutBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                <span>Выход</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="page-header">
+            <h1>Дашборд аналитики</h1>
+            <div class="header-info">
+                <span class="last-update" id="lastUpdate">Обновление: --:--</span>
+                <span class="update-indicator" id="updateIndicator"></span>
+            </div>
+        </header>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Active Agents -->
+            <div class="card" id="agentsCard">
+                <div class="card-header">
+                    <h3>Активные агенты</h3>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="2" y="2" width="20" height="8" rx="2"/>
+                        <rect x="2" y="14" width="20" height="8" rx="2"/>
+                        <line x1="6" y1="6" x2="6.01" y2="6"/>
+                        <line x1="6" y1="18" x2="6.01" y2="18"/>
+                    </svg>
+                </div>
+                <div class="card-body" id="agentsList">
+                    <div class="loading">Загрузка...</div>
+                </div>
+            </div>
+
+            <!-- Last Logins -->
+            <div class="card card-wide" id="loginsCard">
+                <div class="card-header">
+                    <h3>Последние входы</h3>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                </div>
+                <div class="card-body">
+                    <div class="table-container">
+                        <table class="data-table" id="loginsTable">
+                            <thead>
+                                <tr>
+                                    <th>Время</th>
+                                    <th>Пользователь</th>
+                                    <th>Статус</th>
+                                    <th>IP-адрес</th>
+                                </tr>
+                            </thead>
+                            <tbody id="loginsBody">
+                                <tr><td colspan="4" class="loading">Загрузка...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Events by Type (Pie Chart) -->
+            <div class="card" id="eventsTypeCard">
+                <div class="card-header">
+                    <h3>Топ событий по типу</h3>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>
+                        <path d="M22 12A10 10 0 0 0 12 2v10z"/>
+                    </svg>
+                </div>
+                <div class="card-body chart-container">
+                    <canvas id="eventsTypeChart"></canvas>
+                    <div class="no-data hidden" id="eventsTypeNoData">Нет данных для анализа</div>
+                </div>
+            </div>
+
+            <!-- Severity Distribution (Bar Chart) -->
+            <div class="card" id="severityCard">
+                <div class="card-header">
+                    <h3>Распределение по Severity</h3>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <line x1="18" y1="20" x2="18" y2="10"/>
+                        <line x1="12" y1="20" x2="12" y2="4"/>
+                        <line x1="6" y1="20" x2="6" y2="14"/>
+                    </svg>
+                </div>
+                <div class="card-body chart-container">
+                    <canvas id="severityChart"></canvas>
+                    <div class="no-data hidden" id="severityNoData">Нет данных для анализа</div>
+                </div>
+            </div>
+
+            <!-- Active Hosts -->
+            <div class="card" id="hostsCard">
+                <div class="card-header">
+                    <h3>Активные хосты</h3>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="2" y="3" width="20" height="14" rx="2"/>
+                        <line x1="8" y1="21" x2="16" y2="21"/>
+                        <line x1="12" y1="17" x2="12" y2="21"/>
+                    </svg>
+                </div>
+                <div class="card-body" id="hostsList">
+                    <div class="loading">Загрузка...</div>
+                </div>
+            </div>
+
+            <!-- Top Processes (Horizontal Bar Chart) -->
+            <div class="card" id="processesCard">
+                <div class="card-header">
+                    <h3>Топ процессов</h3>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                </div>
+                <div class="card-body chart-container">
+                    <canvas id="processesChart"></canvas>
+                    <div class="no-data hidden" id="processesNoData">Нет данных для анализа</div>
+                </div>
+            </div>
+
+            <!-- Top Users -->
+            <div class="card" id="usersCard">
+                <div class="card-header">
+                    <h3>Топ пользователей</h3>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <div class="card-body" id="usersList">
+                    <div class="loading">Загрузка...</div>
+                </div>
+            </div>
+
+            <!-- Activity Timeline (Line Chart) -->
+            <div class="card card-wide" id="timelineCard">
+                <div class="card-header">
+                    <h3>Активность во времени (24ч)</h3>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <div class="card-body chart-container chart-wide">
+                    <canvas id="timelineChart"></canvas>
+                    <div class="no-data hidden" id="timelineNoData">Нет данных для анализа</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script>
+        // Hide loading overlay when page is ready
+        window.addEventListener('load', function() {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
