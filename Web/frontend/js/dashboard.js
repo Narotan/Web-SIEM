@@ -1,9 +1,3 @@
-/**
- * SIEM Dashboard Module
- * Handles dashboard rendering and auto-refresh
- */
-
-// Chart instances storage
 const charts = {
     eventsType: null,
     severity: null,
@@ -11,57 +5,45 @@ const charts = {
     timeline: null
 };
 
-// Chart.js global configuration for Obsidian SOC theme
 function initChartDefaults() {
     if (typeof Chart !== 'undefined') {
-        Chart.defaults.color = '#8b949e';
-        Chart.defaults.borderColor = '#30363d';
-        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.color = '#94a3b8';
+        Chart.defaults.borderColor = '#1e293b';
+        Chart.defaults.font.family = "'JetBrains Mono', monospace";
     }
 }
 
-// Color palette
 const colors = {
-    info: '#58a6ff',
-    success: '#2ea043',
-    warning: '#d29922',
-    danger: '#f85149',
-    purple: '#a371f7',
-    cyan: '#39c5cf',
-    pink: '#db61a2',
-    orange: '#f0883e'
+    info: '#06b6d4',
+    success: '#10b981',
+    warning: '#f59e0b',
+    danger: '#ef4444',
+    purple: '#8b5cf6',
+    cyan: '#06b6d4',
+    pink: '#ec4899',
+    orange: '#f97316'
 };
 
 const severityColors = {
-    low: '#2ea043',
-    medium: '#d29922',
-    high: '#f85149',
-    critical: '#ff7b72'
+    low: '#10b981',
+    medium: '#f59e0b',
+    high: '#f97316',
+    critical: '#ef4444'
 };
 
-/**
- * Initialize dashboard
- */
 async function initDashboard() {
-    // Check authentication
     if (!Auth.requireAuth()) {
         return;
     }
     
-    // Wait for Chart.js to load
     await waitForChartJs();
     initChartDefaults();
     
-    // Initial load
     await loadDashboard();
     
-    // Setup auto-refresh every 30 seconds
     setInterval(loadDashboard, 30000);
 }
 
-/**
- * Wait for Chart.js to be loaded (async loading)
- */
 function waitForChartJs() {
     return new Promise((resolve) => {
         if (typeof Chart !== 'undefined') {
@@ -74,7 +56,6 @@ function waitForChartJs() {
                 resolve();
             }
         }, 50);
-        // Timeout after 10 seconds
         setTimeout(() => {
             clearInterval(checkInterval);
             resolve();
@@ -82,9 +63,6 @@ function waitForChartJs() {
     });
 }
 
-/**
- * Load dashboard data
- */
 async function loadDashboard() {
     const updateIndicator = document.getElementById('updateIndicator');
     updateIndicator?.classList.add('loading');
@@ -101,9 +79,6 @@ async function loadDashboard() {
     }
 }
 
-/**
- * Update last refresh time
- */
 function updateLastRefresh() {
     const lastUpdate = document.getElementById('lastUpdate');
     if (lastUpdate) {
@@ -112,23 +87,17 @@ function updateLastRefresh() {
     }
 }
 
-/**
- * Render all dashboard widgets
- */
 function renderDashboard(stats) {
     renderAgents(stats.active_agents);
     renderLastLogins(stats.last_logins);
     renderEventsTypeChart(stats.events_by_type);
     renderSeverityChart(stats.severity_distribution);
-    renderHostsList(stats.active_agents); // Using agents as hosts for now
+    renderHostsList(stats.active_agents);
     renderProcessesChart(stats.top_processes);
     renderUsersList(stats.top_users);
     renderTimelineChart(stats.events_per_hour);
 }
 
-/**
- * Render active agents list
- */
 function renderAgents(agents) {
     const container = document.getElementById('agentsList');
     if (!container) return;
@@ -145,7 +114,7 @@ function renderAgents(agents) {
         <div class="agent-list">
             ${agentEntries.map(([id, lastSeen]) => {
                 const lastSeenDate = new Date(lastSeen);
-                const isOnline = (now - lastSeenDate) < 5 * 60 * 1000; // 5 minutes
+                const isOnline = (now - lastSeenDate) < 5 * 60 * 1000;
                 const timeAgo = formatTimeAgo(lastSeenDate);
                 
                 return `
@@ -164,9 +133,6 @@ function renderAgents(agents) {
     container.innerHTML = html;
 }
 
-/**
- * Render last logins table
- */
 function renderLastLogins(logins) {
     const tbody = document.getElementById('loginsBody');
     if (!tbody) return;
@@ -186,7 +152,7 @@ function renderLastLogins(logins) {
             <tr>
                 <td class="mono">${timestamp}</td>
                 <td class="mono">${escapeHtml(user)}</td>
-                <td><span class="status-badge ${isSuccess ? 'success' : 'failure'}">${isSuccess ? 'Успех' : 'Провал'}</span></td>
+                <td><span class="status-badge ${isSuccess ? 'success' : 'failure'}">${isSuccess ? 'SUCCESS' : 'FAILURE'}</span></td>
                 <td class="mono">${escapeHtml(ip)}</td>
             </tr>
         `;
@@ -195,9 +161,6 @@ function renderLastLogins(logins) {
     tbody.innerHTML = html;
 }
 
-/**
- * Render events by type pie chart
- */
 function renderEventsTypeChart(eventsByType) {
     const canvas = document.getElementById('eventsTypeChart');
     const noData = document.getElementById('eventsTypeNoData');
@@ -249,9 +212,6 @@ function renderEventsTypeChart(eventsByType) {
     }
 }
 
-/**
- * Render severity distribution bar chart
- */
 function renderSeverityChart(severityDist) {
     const canvas = document.getElementById('severityChart');
     const noData = document.getElementById('severityNoData');
@@ -314,9 +274,6 @@ function renderSeverityChart(severityDist) {
     }
 }
 
-/**
- * Render hosts list (derived from agents)
- */
 function renderHostsList(agents) {
     const container = document.getElementById('hostsList');
     if (!container) return;
@@ -326,9 +283,7 @@ function renderHostsList(agents) {
         return;
     }
     
-    // Create host statistics based on agents
     const hosts = Object.keys(agents).map(agentId => {
-        // Extract hostname from agent ID if possible
         const hostname = agentId.split('-')[0] || agentId;
         return { name: hostname, agent: agentId };
     });
@@ -347,9 +302,6 @@ function renderHostsList(agents) {
     container.innerHTML = html;
 }
 
-/**
- * Render top processes horizontal bar chart
- */
 function renderProcessesChart(processes) {
     const canvas = document.getElementById('processesChart');
     const noData = document.getElementById('processesNoData');
@@ -364,7 +316,6 @@ function renderProcessesChart(processes) {
     canvas.classList.remove('hidden');
     noData.classList.add('hidden');
     
-    // Sort and take top 5
     const sorted = Object.entries(processes)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 5);
@@ -420,9 +371,6 @@ function renderProcessesChart(processes) {
     }
 }
 
-/**
- * Render top users list
- */
 function renderUsersList(users) {
     const container = document.getElementById('usersList');
     if (!container) return;
@@ -432,7 +380,6 @@ function renderUsersList(users) {
         return;
     }
     
-    // Sort by count and take top 5
     const sorted = Object.entries(users)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 5);
@@ -451,9 +398,6 @@ function renderUsersList(users) {
     container.innerHTML = html;
 }
 
-/**
- * Render activity timeline line chart
- */
 function renderTimelineChart(eventsPerHour) {
     const canvas = document.getElementById('timelineChart');
     const noData = document.getElementById('timelineNoData');
@@ -468,7 +412,6 @@ function renderTimelineChart(eventsPerHour) {
     canvas.classList.remove('hidden');
     noData.classList.add('hidden');
     
-    // Create full 24-hour array
     const labels = [];
     const data = [];
     for (let i = 0; i < 24; i++) {
@@ -529,9 +472,6 @@ function renderTimelineChart(eventsPerHour) {
     }
 }
 
-/**
- * Show error state on all widgets
- */
 function showErrorState() {
     const containers = [
         'agentsList', 'loginsBody', 'hostsList', 'usersList'
@@ -548,7 +488,6 @@ function showErrorState() {
         }
     });
     
-    // Hide charts, show no-data
     ['eventsTypeNoData', 'severityNoData', 'processesNoData', 'timelineNoData'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
@@ -562,8 +501,6 @@ function showErrorState() {
         if (el) el.classList.add('hidden');
     });
 }
-
-// Utility functions
 
 function formatTimestamp(timestamp) {
     if (!timestamp) return '-';
@@ -596,5 +533,4 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', initDashboard);

@@ -1,37 +1,33 @@
-/* =====================================================
-   SIEM Dashboard - Obsidian SOC Theme
-   ===================================================== */
-
-/* CSS Variables */
 :root {
-    /* Background Colors */
-    --bg-primary: #0b0e14;
-    --bg-secondary: #0d1117;
-    --bg-card: #161b22;
-    --bg-hover: #1c2128;
-    --bg-input: #0d1117;
+    /* Background Colors - Deep Navy/Slate Theme */
+    --bg-primary: #02040a;     /* Deepest background */
+    --bg-secondary: #0b1021;   /* Sidebar/Panels */
+    --bg-card: #0d1326;        /* Cards */
+    --bg-hover: #16203c;       /* Hover states */
+    --bg-input: #0b1021;       /* Inputs */
     
     /* Border Colors */
-    --border-color: #30363d;
-    --border-light: #21262d;
+    --border-color: #1e293b;
+    --border-light: #334155;
+    --border-glow: rgba(6, 182, 212, 0.3); /* Cyan glow for borders */
     
     /* Text Colors */
-    --text-primary: #e6edf3;
-    --text-secondary: #8b949e;
-    --text-muted: #6e7681;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
     
-    /* Accent Colors */
-    --accent-success: #2ea043;
-    --accent-danger: #f85149;
-    --accent-warning: #d29922;
-    --accent-info: #58a6ff;
-    --accent-purple: #a371f7;
+    /* Accent Colors - Neon/Cyberpunk */
+    --accent-success: #10b981; /* Emerald */
+    --accent-danger: #ef4444;  /* Red/Pink */
+    --accent-warning: #f59e0b; /* Amber */
+    --accent-info: #06b6d4;    /* Cyan */
+    --accent-purple: #8b5cf6;  /* Violet */
     
     /* Severity Colors */
-    --severity-low: #2ea043;
-    --severity-medium: #d29922;
-    --severity-high: #f85149;
-    --severity-critical: #ff7b72;
+    --severity-low: #10b981;
+    --severity-medium: #f59e0b;
+    --severity-high: #f97316;
+    --severity-critical: #ef4444;
     
     /* Fonts */
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -40,15 +36,18 @@
     /* Spacing */
     --sidebar-width: 240px;
     --header-height: 60px;
-    --card-radius: 8px;
-    --input-radius: 6px;
+    --card-radius: 2px; /* Sharper corners for technical look */
+    --input-radius: 2px;
     
     /* Transitions */
     --transition-fast: 0.15s ease;
     --transition-normal: 0.25s ease;
+
+    /* Effects */
+    --shadow-glow: 0 0 10px rgba(6, 182, 212, 0.1);
+    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
 }
 
-/* Reset & Base */
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
@@ -69,7 +68,6 @@ body {
     overflow-x: hidden;
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -88,10 +86,6 @@ body {
     background: var(--text-muted);
 }
 
-/* =====================================================
-   Sidebar Navigation
-   ===================================================== */
-
 .sidebar {
     position: fixed;
     top: 0;
@@ -103,12 +97,17 @@ body {
     display: flex;
     flex-direction: column;
     z-index: 100;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
 }
 
 .sidebar-header {
     display: flex;
     align-items: center;
     gap: 12px;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    background: linear-gradient(to right, rgba(6, 182, 212, 0.05), transparent);
+}
     padding: 20px;
     border-bottom: 1px solid var(--border-color);
 }
@@ -159,8 +158,10 @@ body {
 }
 
 .nav-item.active .nav-link {
-    background-color: var(--bg-hover);
+    background-color: rgba(6, 182, 212, 0.1);
     color: var(--accent-info);
+    border-left: 2px solid var(--accent-info);
+    border-radius: 0 var(--input-radius) var(--input-radius) 0;
 }
 
 .sidebar-footer {
@@ -194,10 +195,6 @@ body {
     color: var(--accent-danger);
     border-color: var(--accent-danger);
 }
-
-/* =====================================================
-   Main Content
-   ===================================================== */
 
 .main-content {
     margin-left: var(--sidebar-width);
@@ -245,22 +242,30 @@ body {
     50% { opacity: 0.4; }
 }
 
-/* =====================================================
-   Dashboard Grid
-   ===================================================== */
-
 .dashboard-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
 }
 
-/* Cards */
 .card {
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: var(--card-radius);
     overflow: hidden;
+    box-shadow: var(--shadow-card);
+    position: relative;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-glow), transparent);
+    opacity: 0.5;
 }
 
 .card-wide {
@@ -271,14 +276,18 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 20px;
+    padding: 12px 20px;
     border-bottom: 1px solid var(--border-color);
+    background-color: rgba(6, 182, 212, 0.02);
 }
 
 .card-header h3 {
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent-info);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
 }
 
 .card-header svg {
@@ -292,7 +301,6 @@ body {
     min-height: 200px;
 }
 
-/* Chart Containers */
 .chart-container {
     position: relative;
     display: flex;
@@ -309,7 +317,6 @@ body {
     max-height: 180px;
 }
 
-/* Loading & No Data States */
 .loading {
     color: var(--text-muted);
     text-align: center;
@@ -327,10 +334,6 @@ body {
     display: none !important;
 }
 
-/* =====================================================
-   Agent List
-   ===================================================== */
-
 .agent-list {
     display: flex;
     flex-direction: column;
@@ -341,15 +344,16 @@ body {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 10px 12px;
-    background-color: var(--bg-secondary);
-    border-radius: var(--input-radius);
+    padding: 8px 12px;
+    background-color: transparent;
+    border: 1px solid var(--border-light);
+    border-radius: 0;
 }
 
 .agent-status {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
+    width: 6px;
+    height: 6px;
+    border-radius: 0;
     flex-shrink: 0;
 }
 
@@ -380,10 +384,6 @@ body {
     color: var(--text-muted);
 }
 
-/* =====================================================
-   Host List
-   ===================================================== */
-
 .host-list {
     display: flex;
     flex-direction: column;
@@ -394,9 +394,10 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 12px;
-    background-color: var(--bg-secondary);
-    border-radius: var(--input-radius);
+    padding: 8px 12px;
+    background-color: transparent;
+    border: 1px solid var(--border-light);
+    border-radius: 0;
 }
 
 .host-name {
@@ -411,10 +412,6 @@ body {
     font-weight: 500;
 }
 
-/* =====================================================
-   User List
-   ===================================================== */
-
 .user-list {
     display: flex;
     flex-direction: column;
@@ -425,9 +422,10 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 12px;
-    background-color: var(--bg-secondary);
-    border-radius: var(--input-radius);
+    padding: 8px 12px;
+    background-color: transparent;
+    border: 1px solid var(--border-light);
+    border-radius: 0;
 }
 
 .user-name {
@@ -442,10 +440,6 @@ body {
     font-weight: 500;
 }
 
-/* =====================================================
-   Data Tables
-   ===================================================== */
-
 .table-container {
     overflow-x: auto;
 }
@@ -453,20 +447,25 @@ body {
 .data-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
 }
 
 .data-table th,
 .data-table td {
-    padding: 10px 12px;
+    padding: 8px 12px;
     text-align: left;
-    border-bottom: 1px solid var(--border-light);
+    border: 1px solid var(--border-light);
 }
 
 .data-table th {
-    font-weight: 500;
-    color: var(--text-secondary);
+    font-weight: 600;
+    color: var(--accent-info);
     white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background-color: rgba(6, 182, 212, 0.05);
+    font-size: 0.75rem;
 }
 
 .data-table td {
@@ -481,14 +480,15 @@ body {
     border-bottom: none;
 }
 
-/* Status Badges */
 .status-badge {
     display: inline-block;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 0;
+    font-size: 0.7rem;
+    font-weight: 600;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-family: var(--font-mono);
 }
 
 .status-badge.success {
@@ -501,44 +501,55 @@ body {
     color: var(--accent-danger);
 }
 
-/* Monospace cells */
 .mono {
     font-family: var(--font-mono);
 }
 
-/* Severity Badges */
 .severity-badge {
     display: inline-block;
     padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: 500;
+    border-radius: 2px;
+    font-size: 0.7rem;
+    font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
 }
 
 .severity-badge.low {
-    background-color: rgba(46, 160, 67, 0.15);
+    background-color: rgba(16, 185, 129, 0.1);
     color: var(--severity-low);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    box-shadow: 0 0 5px rgba(16, 185, 129, 0.2);
 }
 
 .severity-badge.medium {
-    background-color: rgba(210, 153, 34, 0.15);
+    background-color: rgba(245, 158, 11, 0.1);
     color: var(--severity-medium);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    box-shadow: 0 0 5px rgba(245, 158, 11, 0.2);
 }
 
 .severity-badge.high {
-    background-color: rgba(248, 81, 73, 0.15);
+    background-color: rgba(249, 115, 22, 0.1);
     color: var(--severity-high);
+    border: 1px solid rgba(249, 115, 22, 0.3);
+    box-shadow: 0 0 8px rgba(249, 115, 22, 0.3);
 }
 
 .severity-badge.critical {
-    background-color: rgba(255, 123, 114, 0.2);
+    background-color: rgba(239, 68, 68, 0.1);
     color: var(--severity-critical);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+    animation: pulse-critical 2s infinite;
 }
 
-/* =====================================================
-   Login Page
-   ===================================================== */
+@keyframes pulse-critical {
+    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
 
 .login-page {
     display: flex;
@@ -736,10 +747,6 @@ body {
     font-size: 0.85rem;
 }
 
-/* =====================================================
-   Events Page
-   ===================================================== */
-
 .events-header {
     display: flex;
     gap: 16px;
@@ -810,7 +817,6 @@ body {
     border-color: var(--accent-info);
 }
 
-/* Events Table Card */
 .events-card {
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
@@ -826,6 +832,7 @@ body {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.85rem;
+    font-family: var(--font-mono);
 }
 
 .events-table th,
@@ -836,12 +843,15 @@ body {
 }
 
 .events-table th {
-    background-color: var(--bg-secondary);
-    font-weight: 500;
-    color: var(--text-secondary);
+    background-color: rgba(6, 182, 212, 0.05);
+    font-weight: 600;
+    color: var(--accent-info);
     white-space: nowrap;
     position: sticky;
     top: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.75rem;
 }
 
 .events-table td {
@@ -854,7 +864,8 @@ body {
 }
 
 .events-table tbody tr:hover {
-    background-color: var(--bg-hover);
+    background-color: rgba(6, 182, 212, 0.05);
+    box-shadow: inset 2px 0 0 var(--accent-info);
 }
 
 .events-table .message-cell {
@@ -864,7 +875,6 @@ body {
     text-overflow: ellipsis;
 }
 
-/* Pagination */
 .pagination {
     display: flex;
     justify-content: space-between;
@@ -913,10 +923,6 @@ body {
     height: 16px;
 }
 
-/* =====================================================
-   Modal
-   ===================================================== */
-
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -949,6 +955,7 @@ body {
     flex-direction: column;
     transform: scale(0.95);
     transition: transform var(--transition-normal);
+    box-shadow: var(--shadow-card), 0 0 30px rgba(0, 0, 0, 0.5);
 }
 
 .modal-overlay.active .modal {
@@ -961,12 +968,15 @@ body {
     align-items: center;
     padding: 16px 20px;
     border-bottom: 1px solid var(--border-color);
+    background-color: rgba(6, 182, 212, 0.05);
 }
 
 .modal-header h3 {
     font-size: 1rem;
-    font-weight: 500;
-    color: var(--text-primary);
+    font-weight: 600;
+    color: var(--accent-info);
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .modal-close {
@@ -984,8 +994,8 @@ body {
 }
 
 .modal-close:hover {
-    background-color: var(--bg-hover);
-    color: var(--text-primary);
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--accent-danger);
 }
 
 .modal-close svg {
@@ -1000,7 +1010,8 @@ body {
 }
 
 .json-viewer {
-    background-color: var(--bg-secondary);
+    background-color: #050a14; /* Deepest black/blue */
+    border: 1px solid var(--border-color);
     border-radius: var(--input-radius);
     padding: 16px;
     overflow-x: auto;
@@ -1015,7 +1026,6 @@ body {
     word-break: break-all;
 }
 
-/* JSON Syntax Highlighting */
 .json-key {
     color: var(--accent-info);
 }
@@ -1035,10 +1045,6 @@ body {
 .json-null {
     color: var(--text-muted);
 }
-
-/* =====================================================
-   Responsive Design
-   ===================================================== */
 
 @media (max-width: 1440px) {
     .dashboard-grid {

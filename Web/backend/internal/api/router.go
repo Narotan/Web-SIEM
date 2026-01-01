@@ -6,12 +6,20 @@ import (
 )
 
 func SetupRouter(r *gin.Engine) {
+	// Apply CORS middleware
+	r.Use(middleware.CORS())
 
 	api := r.Group("/api")
-	api.Use(middleware.BasicAuth())
 	{
-		api.GET("/health", HealthHandler)
-		api.GET("/events", GetEventsHandler)
-		api.GET("/stats", GetStatsHandler)
+		// Public endpoints (for auth testing)
+		api.GET("/health", middleware.BasicAuth(), HealthHandler)
+
+		// Protected endpoints
+		protected := api.Group("")
+		protected.Use(middleware.BasicAuth())
+		{
+			protected.GET("/events", GetEventsHandler)
+			protected.GET("/stats", GetStatsHandler)
+		}
 	}
 }

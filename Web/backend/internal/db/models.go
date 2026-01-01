@@ -2,7 +2,6 @@ package db
 
 import "time"
 
-// реквесты в к бдшке
 type DBRequest struct {
 	Database string           `json:"database"`
 	Command  string           `json:"operation"`
@@ -17,7 +16,6 @@ type DBResponse struct {
 	Count   int              `json:"count,omitempty"`
 }
 
-// стата для дашборда
 type DashboardStats struct {
 	ActiveAgents  map[string]time.Time `json:"active_agents"`
 	EventsByType  map[string]int       `json:"events_by_type"`

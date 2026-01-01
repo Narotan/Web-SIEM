@@ -12,15 +12,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Cache for stats to avoid recomputing on every request
 var (
 	statsCache      *db.DashboardStats
 	statsCacheTime  time.Time
 	statsCacheMutex sync.RWMutex
-	statsCacheTTL   = 10 * time.Second // Cache stats for 10 seconds
+	statsCacheTTL   = 10 * time.Second
 )
 
-// get /api/health
 func HealthHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  "ok",
@@ -28,8 +26,6 @@ func HealthHandler(c *gin.Context) {
 	})
 }
 
-// get /api/events with pagination support
-// Query params: page (default 1), limit (default 50, max 200)
 func GetEventsHandler(c *gin.Context) {
 	cfg := config.GetConfig()
 
@@ -112,9 +108,7 @@ func GetEventsHandler(c *gin.Context) {
 	})
 }
 
-// get /api/stats with caching
 func GetStatsHandler(c *gin.Context) {
-	// Check cache first
 	statsCacheMutex.RLock()
 	if statsCache != nil && time.Since(statsCacheTime) < statsCacheTTL {
 		cached := *statsCache
@@ -209,7 +203,6 @@ func GetStatsHandler(c *gin.Context) {
 		stats.LastLogins = stats.LastLogins[:10]
 	}
 
-	// Update cache
 	statsCacheMutex.Lock()
 	statsCache = &stats
 	statsCacheTime = time.Now()

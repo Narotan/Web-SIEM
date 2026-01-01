@@ -2,35 +2,52 @@ package config
 
 import (
 	"log"
-	"sync"
+	"os"
 
-	"github.com/ilyakaznacheev/cleanenv"
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	ServerPort string `env:"DB_PORT" env-default:"8080"`
-	WebUser    string `env:"USER" env-required:"true"`
-	WebPass    string `env:"PASSWORD" env-required:"true"`
-	DBAddr     string `env:"DB_SOCKET" env-default:"localhost:5140"`
-	DBName     string `env:"DB_NAME" env-default:"security_events"`
+	DBAddr     string
+	DBName     string
+	ServerPort string
+	WebUser    string
+	WebPass    string
 }
 
-var (
-	cfg  *Config
-	once sync.Once
-)
+var cfg *Config
 
-// GetConfig загружает настройки один раз за время работы приложения
+func init() {
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, using environment variables")
+	}
+
+	cfg = &Config{
+		DBAddr:     getEnvFirst([]string{"NOSQL_DB_ADDR", "DB_SOCKET"}, "localhost:9090"),
+		DBName:     getEnvFirst([]string{"NOSQL_DB_NAME", "DB_NAME"}, "siem_events"),
+		ServerPort: getEnvFirst([]string{"SERVER_PORT"}, "8080"),
+		WebUser:    getEnvFirst([]string{"WEB_USER", "USER"}, "admin"),
+		WebPass:    getEnvFirst([]string{"WEB_PASSWORD", "PASSWORD"}, "admin"),
+	}
+}
+
 func GetConfig() *Config {
-	once.Do(func() {
-		cfg = &Config{}
-		// Читаем .env файл и заполняем структуру
-		if err := cleanenv.ReadConfig(".env", cfg); err != nil {
-			// Если .env нет, пытаемся прочитать просто переменные окружения
-			if err := cleanenv.ReadEnv(cfg); err != nil {
-				log.Fatalf("failed to load configuration: %v", err)
-			}
-		}
-	})
 	return cfg
+}
+
+func getEnv(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
+}
+
+// getEnvFirst returns the first non-empty env value from the provided keys.
+func getEnvFirst(keys []string, defaultValue string) string {
+	for _, key := range keys {
+		if value := os.Getenv(key); value != "" {
+			return value
+		}
+	}
+	return defaultValue
 }

@@ -19,22 +19,24 @@ func main() {
 	// Setup API routes with authentication
 	api.SetupRouter(router)
 
-	// Serve frontend static files
-	router.Static("/css", "../frontend/css")
-	router.Static("/js", "../frontend/js")
-	router.StaticFile("/", "../frontend/index.html")
-	router.StaticFile("/index.html", "../frontend/index.html")
-	router.StaticFile("/login.html", "../frontend/login.html")
-	router.StaticFile("/events.html", "../frontend/events.html")
+	// Serve frontend static files (relative to Web/backend)
+	frontendDir := "../frontend"
+	router.Static("/css", frontendDir+"/css")
+	router.Static("/js", frontendDir+"/js")
+	router.StaticFile("/", frontendDir+"/index.html")
+	router.StaticFile("/index.html", frontendDir+"/index.html")
+	router.StaticFile("/login.html", frontendDir+"/login.html")
+	router.StaticFile("/events.html", frontendDir+"/events.html")
 
-	// Redirect root to login if not authenticated (handled by frontend JS)
+	// Redirect all other routes to index.html (SPA fallback)
 	router.NoRoute(func(c *gin.Context) {
-		c.File("../frontend/index.html")
+		c.File(frontendDir + "/index.html")
 	})
 
 	addr := fmt.Sprintf(":%s", cfg.ServerPort)
 	log.Printf("Web-server is running on http://localhost%s", addr)
-	log.Printf("Frontend served from ../frontend/")
+	log.Printf("Frontend served from ./Web/frontend/")
+	log.Printf("Login credentials: %s / %s", cfg.WebUser, cfg.WebPass)
 
 	if err := http.ListenAndServe(addr, router); err != nil {
 		log.Fatalf("failed to start server: %v", err)

@@ -1,5 +1,3 @@
-/* Minimalist Login Styles */
-
 .login-container {
     min-height: 100vh;
     display: flex;
@@ -12,7 +10,6 @@
     overflow: hidden;
 }
 
-/* Background Watermark Icon */
 .bg-watermark {
     position: absolute;
     top: 50%;
@@ -34,15 +31,25 @@
 .login-card {
     width: 100%;
     max-width: 400px;
-    background-color: rgba(22, 27, 34, 0.8); /* Semi-transparent card */
+    background-color: var(--bg-card);
     backdrop-filter: blur(12px);
     border: 1px solid var(--border-color);
     border-radius: var(--card-radius);
     padding: 40px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--shadow-card), 0 0 20px rgba(6, 182, 212, 0.05);
     animation: fadeIn 0.5s ease-out;
     z-index: 1;
     position: relative;
+}
+
+.login-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-info), transparent);
 }
 
 @keyframes fadeIn {
@@ -56,15 +63,17 @@
 }
 
 .logo-icon {
-    width: 64px; /* Increased size */
+    width: 64px;
     height: 64px;
     margin: 0 auto 16px;
     color: var(--accent-info);
-    background: rgba(88, 166, 255, 0.1);
+    background: rgba(6, 182, 212, 0.1);
+    border: 1px solid rgba(6, 182, 212, 0.2);
     border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
 }
 
 .logo-icon svg {
@@ -117,7 +126,7 @@
 
 .input-wrapper input {
     width: 100%;
-    padding: 12px 12px 12px 40px; /* Adjusted padding */
+    padding: 12px 12px 12px 40px;
     background-color: var(--bg-input);
     border: 1px solid var(--border-color);
     border-radius: var(--input-radius);

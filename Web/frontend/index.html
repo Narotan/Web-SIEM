@@ -11,7 +11,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     <link rel="stylesheet" href="css/styles.css">
     <style>
-        /* Critical CSS for fast initial paint */
         .loading-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #0b0e14; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.3s; }
         .loading-overlay.hidden { opacity: 0; pointer-events: none; }
         .spinner { width: 40px; height: 40px; border: 3px solid #30363d; border-top-color: #58a6ff; border-radius: 50%; animation: spin 1s linear infinite; }
@@ -19,7 +18,6 @@
     </style>
 </head>
 <body>
-    <!-- Sidebar Navigation -->
     <nav class="sidebar">
         <div class="sidebar-header">
             <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -66,7 +64,6 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
     <main class="main-content">
         <header class="page-header">
             <h1>Дашборд аналитики</h1>
@@ -76,9 +73,7 @@
             </div>
         </header>
 
-        <!-- Dashboard Grid -->
         <div class="dashboard-grid">
-            <!-- Active Agents -->
             <div class="card" id="agentsCard">
                 <div class="card-header">
                     <h3>Активные агенты</h3>
@@ -94,7 +89,6 @@
                 </div>
             </div>
 
-            <!-- Last Logins -->
             <div class="card card-wide" id="loginsCard">
                 <div class="card-header">
                     <h3>Последние входы</h3>
@@ -122,7 +116,6 @@
                 </div>
             </div>
 
-            <!-- Events by Type (Pie Chart) -->
             <div class="card" id="eventsTypeCard">
                 <div class="card-header">
                     <h3>Топ событий по типу</h3>
@@ -137,7 +130,6 @@
                 </div>
             </div>
 
-            <!-- Severity Distribution (Bar Chart) -->
             <div class="card" id="severityCard">
                 <div class="card-header">
                     <h3>Распределение по Severity</h3>
@@ -153,7 +145,6 @@
                 </div>
             </div>
 
-            <!-- Active Hosts -->
             <div class="card" id="hostsCard">
                 <div class="card-header">
                     <h3>Активные хосты</h3>
@@ -168,7 +159,6 @@
                 </div>
             </div>
 
-            <!-- Top Processes (Horizontal Bar Chart) -->
             <div class="card" id="processesCard">
                 <div class="card-header">
                     <h3>Топ процессов</h3>
@@ -182,7 +172,6 @@
                 </div>
             </div>
 
-            <!-- Top Users -->
             <div class="card" id="usersCard">
                 <div class="card-header">
                     <h3>Топ пользователей</h3>
@@ -198,7 +187,6 @@
                 </div>
             </div>
 
-            <!-- Activity Timeline (Line Chart) -->
             <div class="card card-wide" id="timelineCard">
                 <div class="card-header">
                     <h3>Активность во времени (24ч)</h3>
@@ -215,16 +203,14 @@
         </div>
     </main>
 
-    <!-- Loading overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
     </div>
 
-    <script src="js/api.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/dashboard.js"></script>
+    <script src="js/api.js?v=2"></script>
+    <script src="js/auth.js?v=2"></script>
+    <script src="js/dashboard.js?v=2"></script>
     <script>
-        // Hide loading overlay when page is ready
         window.addEventListener('load', function() {
             document.getElementById('loadingOverlay').classList.add('hidden');
         });

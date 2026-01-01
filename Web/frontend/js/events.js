@@ -1,39 +1,23 @@
-/**
- * SIEM Events Page Module
- * Handles events listing, filtering, and detail view
- */
-
-// State
 let allEvents = [];
 let filteredEvents = [];
 let currentPage = 1;
-const pageSize = 50; // Match server-side pagination
+const pageSize = 50;
 let totalPages = 1;
 let totalEvents = 0;
 let eventTypes = new Set();
 let isLoading = false;
 
-/**
- * Initialize events page
- */
 async function initEvents() {
-    // Check authentication
     if (!Auth.requireAuth()) {
         return;
     }
     
-    // Setup event listeners
     setupEventListeners();
     
-    // Initial load
     await loadEvents();
 }
 
-/**
- * Setup event listeners
- */
 function setupEventListeners() {
-    // Search input
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
         let debounceTimer;
@@ -46,7 +30,6 @@ function setupEventListeners() {
         });
     }
     
-    // Severity filter
     const severityFilter = document.getElementById('severityFilter');
     if (severityFilter) {
         severityFilter.addEventListener('change', () => {
@@ -55,7 +38,6 @@ function setupEventListeners() {
         });
     }
     
-    // Type filter
     const typeFilter = document.getElementById('typeFilter');
     if (typeFilter) {
         typeFilter.addEventListener('change', () => {
@@ -64,7 +46,6 @@ function setupEventListeners() {
         });
     }
     
-    // Pagination buttons
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     
@@ -86,7 +67,6 @@ function setupEventListeners() {
         });
     }
     
-    // Modal close
     const closeModal = document.getElementById('closeModal');
     const modalOverlay = document.getElementById('eventModal');
     
@@ -102,7 +82,6 @@ function setupEventListeners() {
         });
     }
     
-    // Close on Escape
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             closeEventModal();
@@ -110,9 +89,6 @@ function setupEventListeners() {
     });
 }
 
-/**
- * Load events from API with server-side pagination
- */
 async function loadEvents() {
     if (isLoading) return;
     isLoading = true;
@@ -131,7 +107,6 @@ async function loadEvents() {
             totalPages = response.totalPages || 1;
             totalEvents = response.total || response.count;
             
-            // Extract event types for filter (from current page)
             allEvents.forEach(event => {
                 if (event.event_type) {
                     eventTypes.add(event.event_type);
@@ -153,19 +128,14 @@ async function loadEvents() {
     }
 }
 
-/**
- * Populate event type filter dropdown
- */
 function populateTypeFilter() {
     const typeFilter = document.getElementById('typeFilter');
     if (!typeFilter) return;
     
-    // Keep first option (All types)
     const firstOption = typeFilter.options[0];
     typeFilter.innerHTML = '';
     typeFilter.appendChild(firstOption);
     
-    // Add event types
     Array.from(eventTypes).sort().forEach(type => {
         const option = document.createElement('option');
         option.value = type;
@@ -174,9 +144,6 @@ function populateTypeFilter() {
     });
 }
 
-/**
- * Filter events based on search and filters (client-side filtering on current page)
- */
 function filterEvents() {
     const searchInput = document.getElementById('searchInput');
     const severityFilter = document.getElementById('severityFilter');
@@ -186,10 +153,8 @@ function filterEvents() {
     const severityValue = severityFilter?.value || '';
     const typeValue = typeFilter?.value || '';
     
-    // If any filters are active, filter client-side on current page data
     if (searchTerm || severityValue || typeValue) {
         filteredEvents = allEvents.filter(event => {
-            // Search filter
             if (searchTerm) {
                 const message = (event.message || '').toLowerCase();
                 const rawLog = (event.raw_log || '').toLowerCase();
@@ -198,12 +163,10 @@ function filterEvents() {
                 }
             }
             
-            // Severity filter
             if (severityValue && event.severity !== severityValue) {
                 return false;
             }
             
-            // Type filter
             if (typeValue && event.event_type !== typeValue) {
                 return false;
             }
@@ -217,9 +180,6 @@ function filterEvents() {
     renderEvents();
 }
 
-/**
- * Render events table
- */
 function renderEvents() {
     const tbody = document.getElementById('eventsBody');
     if (!tbody) return;
@@ -229,7 +189,6 @@ function renderEvents() {
         return;
     }
     
-    // Events are already paginated from server, render all
     const html = filteredEvents.map((event, index) => {
         const timestamp = formatTimestamp(event.timestamp);
         const agentId = event.agent_id || '-';
@@ -253,9 +212,6 @@ function renderEvents() {
     tbody.innerHTML = html;
 }
 
-/**
- * Update pagination controls (using server-side pagination info)
- */
 function updatePagination() {
     const paginationInfo = document.getElementById('paginationInfo');
     const prevBtn = document.getElementById('prevBtn');
@@ -281,9 +237,6 @@ function updatePagination() {
     }
 }
 
-/**
- * Update total events count
- */
 function updateEventsCount() {
     const eventsCount = document.getElementById('eventsCount');
     if (eventsCount) {
@@ -291,9 +244,6 @@ function updateEventsCount() {
     }
 }
 
-/**
- * Show event detail modal
- */
 function showEventDetail(index) {
     const event = filteredEvents[index];
     if (!event) return;
@@ -303,18 +253,13 @@ function showEventDetail(index) {
     
     if (!modal || !jsonContainer) return;
     
-    // Syntax highlight JSON
     const jsonHtml = syntaxHighlightJson(JSON.stringify(event, null, 2));
     jsonContainer.innerHTML = jsonHtml;
     
-    // Show modal
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
 }
 
-/**
- * Close event detail modal
- */
 function closeEventModal() {
     const modal = document.getElementById('eventModal');
     if (modal) {
@@ -323,9 +268,6 @@ function closeEventModal() {
     }
 }
 
-/**
- * Syntax highlight JSON
- */
 function syntaxHighlightJson(json) {
     return json
         .replace(/&/g, '&amp;')
@@ -348,9 +290,6 @@ function syntaxHighlightJson(json) {
         });
 }
 
-/**
- * Show no data message
- */
 function showNoData() {
     const tbody = document.getElementById('eventsBody');
     if (tbody) {
@@ -363,17 +302,12 @@ function showNoData() {
     }
 }
 
-/**
- * Show error message
- */
 function showError() {
     const tbody = document.getElementById('eventsBody');
     if (tbody) {
         tbody.innerHTML = '<tr><td colspan="6" class="no-data">Ошибка загрузки данных</td></tr>';
     }
 }
-
-// Utility functions
 
 function formatTimestamp(timestamp) {
     if (!timestamp) return '-';
@@ -395,8 +329,6 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// Make showEventDetail available globally
 window.showEventDetail = showEventDetail;
 
-// Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', initEvents);
