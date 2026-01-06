@@ -248,6 +248,42 @@ body {
     gap: 20px;
 }
 
+/* Новая структура дашборда с разделением на строки */
+.dashboard-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.dashboard-row:last-child {
+    margin-bottom: 0;
+}
+
+/* Строка с данными/списками */
+.data-row .card {
+    flex: 1;
+    min-width: 0;
+}
+
+.data-row .card-flex-2 {
+    flex: 2;
+}
+
+/* Строка с графиками */
+.charts-row .card {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Строка с timeline */
+.timeline-row {
+    width: 100%;
+}
+
+.card-full {
+    width: 100%;
+}
+
 .card {
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
@@ -315,6 +351,21 @@ body {
 
 .chart-wide canvas {
     max-height: 180px;
+}
+
+.chart-full {
+    width: 100%;
+    display: block;
+}
+
+.chart-full canvas {
+    width: 100% !important;
+    max-height: 220px;
+    height: 220px;
+}
+
+.card-full .card-body {
+    padding: 16px 24px;
 }
 
 .loading {

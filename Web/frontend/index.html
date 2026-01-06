@@ -73,7 +73,8 @@
             </div>
         </header>
 
-        <div class="dashboard-grid">
+        <!-- Строка 1: Списки и таблицы данных -->
+        <div class="dashboard-row data-row">
             <div class="card" id="agentsCard">
                 <div class="card-header">
                     <h3>Активные агенты</h3>
@@ -89,7 +90,7 @@
                 </div>
             </div>
 
-            <div class="card card-wide" id="loginsCard">
+            <div class="card card-flex-2" id="loginsCard">
                 <div class="card-header">
                     <h3>Последние входы</h3>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -116,6 +117,38 @@
                 </div>
             </div>
 
+            <div class="card" id="hostsCard">
+                <div class="card-header">
+                    <h3>Активные хосты</h3>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="2" y="3" width="20" height="14" rx="2"/>
+                        <line x1="8" y1="21" x2="16" y2="21"/>
+                        <line x1="12" y1="17" x2="12" y2="21"/>
+                    </svg>
+                </div>
+                <div class="card-body" id="hostsList">
+                    <div class="loading">Загрузка...</div>
+                </div>
+            </div>
+
+            <div class="card" id="usersCard">
+                <div class="card-header">
+                    <h3>Топ пользователей</h3>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <div class="card-body" id="usersList">
+                    <div class="loading">Загрузка...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Строка 2: Графики -->
+        <div class="dashboard-row charts-row">
             <div class="card" id="eventsTypeCard">
                 <div class="card-header">
                     <h3>Топ событий по типу</h3>
@@ -145,20 +178,6 @@
                 </div>
             </div>
 
-            <div class="card" id="hostsCard">
-                <div class="card-header">
-                    <h3>Активные хосты</h3>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <rect x="2" y="3" width="20" height="14" rx="2"/>
-                        <line x1="8" y1="21" x2="16" y2="21"/>
-                        <line x1="12" y1="17" x2="12" y2="21"/>
-                    </svg>
-                </div>
-                <div class="card-body" id="hostsList">
-                    <div class="loading">Загрузка...</div>
-                </div>
-            </div>
-
             <div class="card" id="processesCard">
                 <div class="card-header">
                     <h3>Топ процессов</h3>
@@ -171,23 +190,11 @@
                     <div class="no-data hidden" id="processesNoData">Нет данных для анализа</div>
                 </div>
             </div>
+        </div>
 
-            <div class="card" id="usersCard">
-                <div class="card-header">
-                    <h3>Топ пользователей</h3>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                        <circle cx="9" cy="7" r="4"/>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                    </svg>
-                </div>
-                <div class="card-body" id="usersList">
-                    <div class="loading">Загрузка...</div>
-                </div>
-            </div>
-
-            <div class="card card-wide" id="timelineCard">
+        <!-- Строка 3: График активности во всю ширину -->
+        <div class="dashboard-row timeline-row">
+            <div class="card card-full" id="timelineCard">
                 <div class="card-header">
                     <h3>Активность во времени (24ч)</h3>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -195,7 +202,7 @@
                         <polyline points="12 6 12 12 16 14"/>
                     </svg>
                 </div>
-                <div class="card-body chart-container chart-wide">
+                <div class="card-body chart-container chart-full">
                     <canvas id="timelineChart"></canvas>
                     <div class="no-data hidden" id="timelineNoData">Нет данных для анализа</div>
                 </div>
