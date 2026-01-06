@@ -1,0 +1,46 @@
+[Unit]
+Description=SIEM Security Agent
+Documentation=https://github.com/Narotan/SIEM-Agent
+After=network.target auditd.service
+
+[Service]
+Type=simple
+User=root
+Group=root
+
+# Путь к исполняемому файлу
+ExecStart=/usr/local/bin/siem-agent
+
+# Рабочая директория
+WorkingDirectory=/etc/siem-agent
+
+# Переменные окружения
+Environment="CONFIG_PATH=/etc/siem-agent/config.yaml"
+
+# Restart политика
+Restart=always
+RestartSec=10
+
+# Ограничения ресурсов
+LimitNOFILE=65536
+MemoryLimit=512M
+
+# Логирование
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=siem-agent
+
+# Security настройки
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/log/siem-agent /var/lib/siem-agent
+
+# Graceful shutdown
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

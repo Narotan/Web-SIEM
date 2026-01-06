@@ -1,0 +1,38 @@
+
+# конфиг бд к которой подключаемся 
+server:
+  host: "127.0.0.1"           
+  port: 5140                
+
+# настройки логирования агента
+logging:
+  agent_id: "agent-ubuntu-01" 
+  sources:
+    - /tmp/test-siem-logs/auth.log
+  send_interval: 5s           # интервал отправки (сек)
+  batch_size: 10             # размер пачки событий
+
+# настройки логирования для самого агента
+agent_logging:
+  file: "/tmp/siem-agent-logs/agent.log" 
+  level: "info"                           
+  max_size: 100                           # (MB)
+  max_backups: 5                          # количество backup файлов
+
+# настройки дискового  буфера куда сохранять события при недоступности сервера
+buffer:
+  directory: "/tmp/siem-agent-buffer"     # директория для дискового буфера
+  max_size: 500                           # (MB)
+
+filters:
+  exclude_patterns:            
+    - ".*CRON.*"
+    - ".*systemd.*session.*"
+  include_patterns: []          # включить только события по паттернам (пусто = все)
+  severity_threshold: "low"     
+  exclude_sources: []           # исключить источники
+
+retry:
+  max_attempts: 5               # Максимальное количество попыток
+  initial_delay: 2s              # (сек)
+  max_delay: 60s                 # (сек)
