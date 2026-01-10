@@ -51,7 +51,13 @@ func (s *siemService) GetEvents(page, limit int) (*domain.EventsPage, error) {
 	sort.Slice(data, func(i, j int) bool {
 		t1, _ := data[i]["timestamp"].(string)
 		t2, _ := data[j]["timestamp"].(string)
-		return t1 > t2
+		if t1 != t2 {
+			return t1 > t2
+		}
+		// Tie-breaker: sort by _id
+		id1, _ := data[i]["_id"].(string)
+		id2, _ := data[j]["_id"].(string)
+		return id1 > id2
 	})
 
 	totalCount := len(data)

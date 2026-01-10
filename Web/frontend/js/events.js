@@ -24,7 +24,26 @@ async function initEvents() {
     if (paginationContainer) paginationContainer.style.display = 'none';
     setupInfiniteScroll();
 
-    await loadEventsScroll(); // Use loadEventsScroll initially
+    // Handle URL parameters for search
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchParam = urlParams.get('search');
+    const regexParam = urlParams.get('regex');
+
+    if (searchParam) {
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.value = searchParam;
+        }
+    }
+
+    if (regexParam === 'true') {
+        const regexToggle = document.getElementById('regexToggle');
+        if (regexToggle) {
+            regexToggle.checked = true;
+        }
+    }
+
+    await loadEventsScroll();
 }
 
 function setupEventListeners() {
@@ -201,9 +220,14 @@ function updateSelectedFilters() {
 }
 
 function setupInfiniteScroll() {
-    const scrollLoader = document.getElementById('scrollLoader');
+    const sentinel = document.getElementById('scrollSentinel');
     
-    if (!scrollLoader) return;
+    if (!sentinel) return;
+    
+    // Disconnect existing observer if any
+    if (scrollObserver) {
+        scrollObserver.disconnect();
+    }
     
     scrollObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -214,11 +238,11 @@ function setupInfiniteScroll() {
         });
     }, {
         root: null,
-        rootMargin: '100px',
+        rootMargin: '200px', // Use reasonable margin to preload
         threshold: 0.1
     });
     
-    scrollObserver.observe(scrollLoader);
+    scrollObserver.observe(sentinel);
 }
 
 async function loadEvents() {
@@ -266,7 +290,7 @@ async function loadEventsScroll() {
     
     const scrollLoader = document.getElementById('scrollLoader');
     if (scrollLoader) {
-        scrollLoader.style.display = 'flex';
+        scrollLoader.style.display = 'flex'; // Show loader only when actively loading
     }
     
     try {
@@ -293,7 +317,13 @@ async function loadEventsScroll() {
     } finally {
         isLoading = false;
         if (scrollLoader) {
-            scrollLoader.style.display = currentPage < totalPages ? 'flex' : 'none';
+            scrollLoader.style.display = 'none'; // Hide loader immediately after request finishes
+        }
+        
+        // Hide sentinel if we reached the end
+        const sentinel = document.getElementById('scrollSentinel');
+        if (sentinel) {
+            sentinel.style.display = currentPage >= totalPages ? 'none' : 'block';
         }
     }
 }
@@ -352,14 +382,15 @@ function filterEvents() {
         if (searchTerm) {
             const message = (event.message || '').toLowerCase();
             const rawLog = (event.raw_log || '').toLowerCase();
+            const user = (event.user || '').toLowerCase();
             
             if (searchRegex) {
-                if (!searchRegex.test(message) && !searchRegex.test(rawLog)) {
+                if (!searchRegex.test(message) && !searchRegex.test(rawLog) && !searchRegex.test(user)) {
                     return false;
                 }
             } else {
                 const searchLower = searchTerm.toLowerCase();
-                if (!message.includes(searchLower) && !rawLog.includes(searchLower)) {
+                if (!message.includes(searchLower) && !rawLog.includes(searchLower) && !user.includes(searchLower)) {
                     return false;
                 }
             }

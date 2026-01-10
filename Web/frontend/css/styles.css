@@ -477,6 +477,13 @@ body {
     background-color: transparent;
     border: 1px solid var(--border-light);
     border-radius: 0;
+    text-decoration: none; /* For clickable links */
+}
+
+.user-item.clickable:hover {
+    background-color: var(--bg-hover);
+    border-color: var(--accent-info);
+    cursor: pointer;
 }
 
 .user-name {

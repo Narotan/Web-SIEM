@@ -387,10 +387,10 @@ function renderUsersList(users) {
     const html = `
         <div class="user-list">
             ${sorted.map(([name, count]) => `
-                <div class="user-item">
+                <a href="events.html?search=${encodeURIComponent(name)}&regex=true" class="user-item clickable">
                     <span class="user-name">${escapeHtml(name)}</span>
                     <span class="user-count">${count}</span>
-                </div>
+                </a>
             `).join('')}
         </div>
     `;
