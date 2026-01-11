@@ -6,7 +6,7 @@ let totalPages = 1;
 let totalEvents = 0;
 let eventTypes = new Set();
 let isLoading = false;
-let infiniteScrollMode = true; // Always enabled
+let infiniteScrollMode = true;
 let scrollObserver = null;
 let selectedSeverities = [];
 let selectedTypes = [];
@@ -19,12 +19,10 @@ async function initEvents() {
     setupEventListeners();
     setupMultiSelectFilters();
     
-    // Setup infinite scroll immediately
     const paginationContainer = document.getElementById('paginationContainer');
     if (paginationContainer) paginationContainer.style.display = 'none';
     setupInfiniteScroll();
 
-    // Handle URL parameters for search
     const urlParams = new URLSearchParams(window.location.search);
     const searchParam = urlParams.get('search');
     const regexParam = urlParams.get('regex');
@@ -47,7 +45,6 @@ async function initEvents() {
 }
 
 function setupEventListeners() {
-    // Поиск с debounce
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
         let debounceTimer;
@@ -60,19 +57,17 @@ function setupEventListeners() {
         });
     }
     
-    // Regex toggle
     const regexToggle = document.getElementById('regexToggle');
     if (regexToggle) {
         regexToggle.addEventListener('change', () => {
             currentPage = 1;
-            allEvents = []; // Clear for new search
+            allEvents = [];
             const tbody = document.getElementById('eventsBody');
             if (tbody) tbody.innerHTML = '';
             loadEventsScroll();
         });
     }
 
-    // Export buttons
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     
@@ -94,7 +89,6 @@ function setupEventListeners() {
         });
     }
     
-    // Export buttons
     const exportJSON = document.getElementById('exportJSON');
     const exportCSV = document.getElementById('exportCSV');
     
@@ -106,7 +100,6 @@ function setupEventListeners() {
         exportCSV.addEventListener('click', () => exportEvents('csv'));
     }
     
-    // Modal
     const closeModal = document.getElementById('closeModal');
     const modalOverlay = document.getElementById('eventModal');
     
@@ -130,7 +123,6 @@ function setupEventListeners() {
 }
 
 function setupMultiSelectFilters() {
-    // Severity filter
     const severityBtn = document.getElementById('severityBtn');
     const severityDropdown = document.getElementById('severityDropdown');
     const severityCheckboxes = document.querySelectorAll('.severity-checkbox');
@@ -141,7 +133,6 @@ function setupMultiSelectFilters() {
             severityDropdown.classList.toggle('active');
             severityBtn.classList.toggle('active');
             
-            // Close type dropdown
             const typeDropdown = document.getElementById('typeDropdown');
             const typeBtn = document.getElementById('typeBtn');
             if (typeDropdown) typeDropdown.classList.remove('active');
@@ -157,7 +148,6 @@ function setupMultiSelectFilters() {
         });
     }
     
-    // Type filter
     const typeBtn = document.getElementById('typeBtn');
     const typeDropdown = document.getElementById('typeDropdown');
     
@@ -167,7 +157,6 @@ function setupMultiSelectFilters() {
             typeDropdown.classList.toggle('active');
             typeBtn.classList.toggle('active');
             
-            // Close severity dropdown
             const severityDropdown = document.getElementById('severityDropdown');
             const severityBtn = document.getElementById('severityBtn');
             if (severityDropdown) severityDropdown.classList.remove('active');
@@ -175,7 +164,6 @@ function setupMultiSelectFilters() {
         });
     }
     
-    // Close dropdowns when clicking outside
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.multi-select-container')) {
             document.querySelectorAll('.multi-select-dropdown').forEach(dropdown => {
@@ -189,15 +177,12 @@ function setupMultiSelectFilters() {
 }
 
 function updateSelectedFilters() {
-    // Update severity filters
     selectedSeverities = Array.from(document.querySelectorAll('.severity-checkbox:checked'))
         .map(cb => cb.value);
     
-    // Update type filters
     selectedTypes = Array.from(document.querySelectorAll('.type-checkbox:checked'))
         .map(cb => cb.value);
     
-    // Update button text
     const severityBtn = document.getElementById('severityBtn');
     if (severityBtn) {
         const span = severityBtn.querySelector('span');
@@ -224,7 +209,6 @@ function setupInfiniteScroll() {
     
     if (!sentinel) return;
     
-    // Disconnect existing observer if any
     if (scrollObserver) {
         scrollObserver.disconnect();
     }
@@ -238,7 +222,7 @@ function setupInfiniteScroll() {
         });
     }, {
         root: null,
-        rootMargin: '200px', // Use reasonable margin to preload
+        rootMargin: '200px',
         threshold: 0.1
     });
     
@@ -290,7 +274,7 @@ async function loadEventsScroll() {
     
     const scrollLoader = document.getElementById('scrollLoader');
     if (scrollLoader) {
-        scrollLoader.style.display = 'flex'; // Show loader only when actively loading
+        scrollLoader.style.display = 'flex';
     }
     
     try {
@@ -317,10 +301,9 @@ async function loadEventsScroll() {
     } finally {
         isLoading = false;
         if (scrollLoader) {
-            scrollLoader.style.display = 'none'; // Hide loader immediately after request finishes
+            scrollLoader.style.display = 'none';
         }
         
-        // Hide sentinel if we reached the end
         const sentinel = document.getElementById('scrollSentinel');
         if (sentinel) {
             sentinel.style.display = currentPage >= totalPages ? 'none' : 'block';
@@ -332,7 +315,6 @@ function populateTypeFilter() {
     const typeDropdown = document.getElementById('typeDropdown');
     if (!typeDropdown) return;
     
-    // Keep existing checkboxes state
     const checkedValues = Array.from(document.querySelectorAll('.type-checkbox:checked'))
         .map(cb => cb.value);
     
@@ -378,7 +360,6 @@ function filterEvents() {
     }
     
     filteredEvents = allEvents.filter(event => {
-        // Search filter
         if (searchTerm) {
             const message = (event.message || '').toLowerCase();
             const rawLog = (event.raw_log || '').toLowerCase();
@@ -396,14 +377,12 @@ function filterEvents() {
             }
         }
         
-        // Severity filter
         if (selectedSeverities.length > 0) {
             if (!selectedSeverities.includes(event.severity)) {
                 return false;
             }
         }
         
-        // Type filter
         if (selectedTypes.length > 0) {
             if (!selectedTypes.includes(event.event_type)) {
                 return false;

@@ -54,7 +54,6 @@ func (s *siemService) GetEvents(page, limit int) (*domain.EventsPage, error) {
 		if t1 != t2 {
 			return t1 > t2
 		}
-		// Tie-breaker: sort by _id
 		id1, _ := data[i]["_id"].(string)
 		id2, _ := data[j]["_id"].(string)
 		return id1 > id2

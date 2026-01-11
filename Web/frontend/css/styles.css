@@ -1,49 +1,40 @@
 :root {
-    /* Background Colors - Deep Navy/Slate Theme */
-    --bg-primary: #02040a;     /* Deepest background */
-    --bg-secondary: #0b1021;   /* Sidebar/Panels */
-    --bg-card: #0d1326;        /* Cards */
-    --bg-hover: #16203c;       /* Hover states */
-    --bg-input: #0b1021;       /* Inputs */
+    --bg-primary: #02040a;
+    --bg-secondary: #0b1021;
+    --bg-card: #0d1326;
+    --bg-hover: #16203c;
+    --bg-input: #0b1021;
     
-    /* Border Colors */
     --border-color: #1e293b;
     --border-light: #334155;
-    --border-glow: rgba(6, 182, 212, 0.3); /* Cyan glow for borders */
+    --border-glow: rgba(6, 182, 212, 0.3);
     
-    /* Text Colors */
     --text-primary: #e2e8f0;
     --text-secondary: #94a3b8;
     --text-muted: #64748b;
     
-    /* Accent Colors - Neon/Cyberpunk */
-    --accent-success: #10b981; /* Emerald */
-    --accent-danger: #ef4444;  /* Red/Pink */
-    --accent-warning: #f59e0b; /* Amber */
-    --accent-info: #06b6d4;    /* Cyan */
-    --accent-purple: #8b5cf6;  /* Violet */
+    --accent-success: #10b981;
+    --accent-danger: #ef4444;
+    --accent-warning: #f59e0b;
+    --accent-info: #06b6d4;
+    --accent-purple: #8b5cf6;
     
-    /* Severity Colors */
     --severity-low: #10b981;
     --severity-medium: #f59e0b;
     --severity-high: #f97316;
     --severity-critical: #ef4444;
     
-    /* Fonts */
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
     
-    /* Spacing */
     --sidebar-width: 240px;
     --header-height: 60px;
-    --card-radius: 2px; /* Sharper corners for technical look */
+    --card-radius: 2px;
     --input-radius: 2px;
     
-    /* Transitions */
     --transition-fast: 0.15s ease;
     --transition-normal: 0.25s ease;
 
-    /* Effects */
     --shadow-glow: 0 0 10px rgba(6, 182, 212, 0.1);
     --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
 }
@@ -107,9 +98,6 @@ body {
     padding: 20px;
     border-bottom: 1px solid var(--border-color);
     background: linear-gradient(to right, rgba(6, 182, 212, 0.05), transparent);
-}
-    padding: 20px;
-    border-bottom: 1px solid var(--border-color);
 }
 
 .logo-icon {
@@ -248,7 +236,6 @@ body {
     gap: 20px;
 }
 
-/* Новая структура дашборда с разделением на строки */
 .dashboard-row {
     display: flex;
     gap: 20px;
@@ -259,7 +246,6 @@ body {
     margin-bottom: 0;
 }
 
-/* Строка с данными/списками */
 .data-row .card {
     flex: 1;
     min-width: 0;
@@ -269,13 +255,11 @@ body {
     flex: 2;
 }
 
-/* Строка с графиками */
 .charts-row .card {
     flex: 1;
     min-width: 0;
 }
 
-/* Строка с timeline */
 .timeline-row {
     width: 100%;
 }
@@ -477,7 +461,7 @@ body {
     background-color: transparent;
     border: 1px solid var(--border-light);
     border-radius: 0;
-    text-decoration: none; /* For clickable links */
+    text-decoration: none;
 }
 
 .user-item.clickable:hover {
@@ -1075,7 +1059,7 @@ body {
 }
 
 .json-viewer {
-    background-color: #050a14; /* Deepest black/blue */
+    background-color: #050a14;
     border: 1px solid var(--border-color);
     border-radius: var(--input-radius);
     padding: 16px;
@@ -1161,7 +1145,6 @@ body {
     }
 }
 
-/* Export Buttons */
 .export-buttons {
     display: flex;
     gap: 8px;
@@ -1198,7 +1181,6 @@ body {
     transform: translateY(1px);
 }
 
-/* Regex Checkbox */
 .regex-checkbox {
     display: flex;
     align-items: center;
@@ -1225,7 +1207,6 @@ body {
     font-weight: 500;
 }
 
-/* Multi-Select Filter */
 .multi-select-container {
     position: relative;
 }
@@ -1307,7 +1288,6 @@ body {
     cursor: pointer;
 }
 
-/* View Mode Toggle */
 .view-mode-toggle {
     display: flex;
     align-items: center;
@@ -1334,7 +1314,6 @@ body {
     font-weight: 500;
 }
 
-/* Scroll Loader */
 .scroll-loader {
     display: flex;
     align-items: center;

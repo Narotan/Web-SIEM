@@ -23,11 +23,11 @@ func init() {
 	}
 
 	cfg = &Config{
-		DBAddr:     getEnvFirst([]string{"NOSQL_DB_ADDR", "DB_SOCKET"}, "localhost:9090"),
-		DBName:     getEnvFirst([]string{"NOSQL_DB_NAME", "DB_NAME"}, "siem_events"),
+		DBAddr:     getEnvFirst([]string{"DB_SOCKET"}, "localhost:9090"),
+		DBName:     getEnvFirst([]string{"DB_NAME"}, "siem_events"),
 		ServerPort: getEnvFirst([]string{"SERVER_PORT"}, "8080"),
-		WebUser:    getEnvFirst([]string{"WEB_USER", "USER"}, "admin"),
-		WebPass:    getEnvFirst([]string{"WEB_PASSWORD", "PASSWORD"}, "admin"),
+		WebUser:    getEnvFirst([]string{"WEB_USER"}, "admin"),
+		WebPass:    getEnvFirst([]string{"WEB_PASSWORD"}, "admin"),
 	}
 }
 
